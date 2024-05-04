@@ -63,7 +63,7 @@ index fc017ad..06ab746 100644
      unset(CMAKE_MODULE_PATH_OLD)
    endif()
 -  find_dependency(libdwarf REQUIRED)
-+  if(@CPPTRACE_FIND_LIBDWARF_WITH_PKGCONFIG@)
++  if(NOT @CPPTRACE_FIND_LIBDWARF_WITH_PKGCONFIG@)
 +    find_dependency(libdwarf REQUIRED)
 +  endif()
  endif()
