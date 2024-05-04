@@ -1,84 +1,91 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index fc51b0e..1b91c68 100644
+index 481393b..d5e1002 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -350,7 +350,9 @@ endif()
+@@ -350,7 +350,12 @@ endif()
  if(CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF)
    target_compile_definitions(${target_name} PUBLIC CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF)
    if(CPPTRACE_USE_EXTERNAL_LIBDWARF)
 -    find_package(libdwarf REQUIRED)
-+         #find_package(libdwarf REQUIRED)
-+         find_package(PkgConfig)
-+         pkg_check_modules(libdwarf REQUIRED libdwarf)
++    if(NOT CPPTRACE_FIND_LIBDWARF_WITH_PKGCONFIG)
++      find_package(libdwarf REQUIRED)
++    else()
++      find_package(PkgConfig)
++      pkg_check_modules(LIBDWARF REQUIRED libdwarf)
++    endif()
    else()
      include(FetchContent)
      # First, dependencies: Zstd and zlib (currently relying on system zlib)
-@@ -424,25 +426,25 @@ if(CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF)
-       # libdwarf::dwarf-shared, libdwarf::dwarf, then libdwarf
-       # libdwarf v0.8.0 installs with the target libdwarf::dwarf somehow, despite creating libdwarf::dwarf-static or
-       # libdwarf::dwarf-shared under fetchcontent
--      if(TARGET libdwarf::dwarf-static)
--        set(LIBDWARF_LIBRARIES libdwarf::dwarf-static)
--      elseif(TARGET libdwarf::dwarf-shared)
--        set(LIBDWARF_LIBRARIES libdwarf::dwarf-shared)
--      elseif(TARGET libdwarf::dwarf)
--        set(LIBDWARF_LIBRARIES libdwarf::dwarf)
--      elseif(TARGET libdwarf)
--        set(LIBDWARF_LIBRARIES libdwarf)
--      else()
--        message(FATAL_ERROR "Couldn't find libdwarf target name to link against")
--      endif()
--      target_link_libraries(${target_name} PRIVATE ${LIBDWARF_LIBRARIES})
-+      #if(TARGET libdwarf::dwarf-static)
-+      #  set(LIBDWARF_LIBRARIES libdwarf::dwarf-static)
-+      #elseif(TARGET libdwarf::dwarf-shared)
-+      #  set(LIBDWARF_LIBRARIES libdwarf::dwarf-shared)
-+      #elseif(TARGET libdwarf::dwarf)
-+      #  set(LIBDWARF_LIBRARIES libdwarf::dwarf)
-+      #elseif(TARGET libdwarf)
-+      #  set(LIBDWARF_LIBRARIES libdwarf)
-+      #else()
-+      #  message(FATAL_ERROR "Couldn't find libdwarf target name to link against")
-+      #endif()
-+      target_link_libraries(${target_name} PRIVATE ${libdwarf_LIBRARIES})
-     endif()
-     # There seems to be no consistency at all about where libdwarf decides to place its headers........ Figure out if
+@@ -440,8 +445,13 @@ if(CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF)
      # it's libdwarf/libdwarf.h and libdwarf/dwarf.h or just libdwarf.h and dwarf.h
      include(CheckIncludeFileCXX)
      # libdwarf's cmake doesn't properly set variables to indicate where its libraries live
 -    get_target_property(LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES ${LIBDWARF_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
 -    set(CMAKE_REQUIRED_INCLUDES ${LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES})
-+    #get_target_property(LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES ${LIBDWARF_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
-+    set(CMAKE_REQUIRED_INCLUDES ${libdwarf_INCLUDE_DIRS})
++    if(NOT CPPTRACE_CONDA_LIBDWARF_WEIRDNESS)
++      get_target_property(LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES ${LIBDWARF_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
++      set(CMAKE_REQUIRED_INCLUDES ${LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES})
++    else()
++      set(CMAKE_REQUIRED_INCLUDES ${LIBDWARF_INCLUDE_DIRS})
++      target_compile_definitions(${target_name} PRIVATE CPPTRACE_CONDA_LIBDWARF_WEIRDNESS)
++    endif()
      CHECK_INCLUDE_FILE_CXX("libdwarf/libdwarf.h" LIBDWARF_IS_NESTED)
      CHECK_INCLUDE_FILE_CXX("libdwarf.h" LIBDWARF_IS_NOT_NESTED)
      # check_include_file("libdwarf/libdwarf.h" LIBDWARF_IS_NESTED)
-diff --git a/src/utils/dwarf.hpp b/src/utils/dwarf.hpp
-index 98bf587..507c87b 100644
---- a/src/utils/dwarf.hpp
-+++ b/src/utils/dwarf.hpp
-@@ -14,7 +14,7 @@
-  #include <libdwarf/dwarf.h>
- #else
-  #include <libdwarf.h>
-- #include <dwarf.h>
-+ #include <libdwarf-0/dwarf.h>
- #endif
+diff --git a/cmake/OptionVariables.cmake b/cmake/OptionVariables.cmake
+index 5589a8d..d432a3c 100644
+--- a/cmake/OptionVariables.cmake
++++ b/cmake/OptionVariables.cmake
+@@ -159,9 +159,11 @@ if(PROJECT_IS_TOP_LEVEL)
+ endif()
 
- namespace cpptrace {
+ option(CPPTRACE_USE_EXTERNAL_LIBDWARF "" OFF)
++option(CPPTRACE_FIND_LIBDWARF_WITH_PKGCONFIG "" OFF)
+ option(CPPTRACE_USE_EXTERNAL_ZSTD "" OFF)
+ option(CPPTRACE_CONAN "" OFF)
+ option(CPPTRACE_VCPKG "" OFF)
++option(CPPTRACE_CONDA_LIBDWARF_WEIRDNESS "" OFF)
+ option(CPPTRACE_SANITIZER_BUILD "" OFF)
+ option(CPPTRACE_WERROR_BUILD "" OFF)
+ option(CPPTRACE_POSITION_INDEPENDENT_CODE "" ON)
+@@ -174,4 +176,5 @@ mark_as_advanced(
+   CPPTRACE_WERROR_BUILD
+   CPPTRACE_CONAN
+   CPPTRACE_VCPKG
++  CPPTRACE_CONDA_LIBDWARF_WEIRDNESS
+ )
 diff --git a/cmake/in/cpptrace-config-cmake.in b/cmake/in/cpptrace-config-cmake.in
-index 412a9d0..c8c478d 100644
+index fc017ad..06ab746 100644
 --- a/cmake/in/cpptrace-config-cmake.in
 +++ b/cmake/in/cpptrace-config-cmake.in
-@@ -4,8 +4,8 @@
- # Dependencies
- if(@CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF@)
-   include(CMakeFindDependencyMacro)
--  find_dependency(zstd REQUIRED)
+@@ -14,7 +14,9 @@ if(@CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF@)
+     set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH_OLD}")
+     unset(CMAKE_MODULE_PATH_OLD)
+   endif()
 -  find_dependency(libdwarf REQUIRED)
-+  #find_dependency(zstd REQUIRED)
-+  #find_dependency(libdwarf REQUIRED)
++  if(@CPPTRACE_FIND_LIBDWARF_WITH_PKGCONFIG@)
++    find_dependency(libdwarf REQUIRED)
++  endif()
  endif()
 
  # We cannot modify an existing IMPORT target
+diff --git a/src/utils/dwarf.hpp b/src/utils/dwarf.hpp
+index 98bf587..a4f6c55 100644
+--- a/src/utils/dwarf.hpp
++++ b/src/utils/dwarf.hpp
+@@ -13,8 +13,13 @@
+  #include <libdwarf/libdwarf.h>
+  #include <libdwarf/dwarf.h>
+ #else
+- #include <libdwarf.h>
+- #include <dwarf.h>
++ #ifndef CPPTRACE_CONDA_LIBDWARF_WEIRDNESS
++  #include <libdwarf.h>
++  #include <dwarf.h>
++ #else
++  #include <libdwarf.h>
++  #include <libdwarf-0/dwarf.h>
++ #endif
+ #endif
 
+ namespace cpptrace {
