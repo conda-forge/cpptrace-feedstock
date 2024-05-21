@@ -1,5 +1,5 @@
 {% set name = "cpptrace" %}
-{% set version = "0.5.2" %}
+{% set version = "0.5.4" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/jeremy-rifkin/cpptrace/archive/v{{ version }}.tar.gz
-  sha256: d148998e175b9c69ffb4383ab321a0d27487392e4eee3f39441d35b6856c8f78
+  sha256: bab0f76330f90c445216ccade1a3ff29c9c4bbd44805be34d52095cd95b02df4
   patches:
     - patches/0001-libdwarf-patches.patch
 
@@ -17,8 +17,9 @@ build:
 
 requirements:
   build:
-    - {{ compiler('c') }}
-    - {{ compiler('cxx') }}
+    - {{ compiler("c") }}
+    - {{ stdlib("c") }}
+    - {{ compiler("cxx") }}
     - cmake
     - ninja
     - pkg-config
@@ -30,7 +31,7 @@ requirements:
 test:
   requires:
     - cmake
-    - {{ compiler('cxx') }}
+    - {{ compiler("cxx") }}
     - ninja
   files:
     - test
