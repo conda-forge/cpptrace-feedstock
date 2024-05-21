@@ -84,7 +84,7 @@ index 98bf587..a4f6c55 100644
 +  #include <dwarf.h>
 + #else
 +  #include <libdwarf.h>
-+  #include <libdwarf-0/dwarf.h>
++  #include <dwarf.h>
 + #endif
  #endif
 
