@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 481393b..d821612 100644
+index 481393b..3856a35 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -350,7 +350,12 @@ endif()
@@ -16,6 +16,21 @@ index 481393b..d821612 100644
    else()
      include(FetchContent)
      # First, dependencies: Zstd and zlib (currently relying on system zlib)
+@@ -440,8 +445,12 @@ if(CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF)
+     # it's libdwarf/libdwarf.h and libdwarf/dwarf.h or just libdwarf.h and dwarf.h
+     include(CheckIncludeFileCXX)
+     # libdwarf's cmake doesn't properly set variables to indicate where its libraries live
+-    get_target_property(LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES ${LIBDWARF_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
+-    set(CMAKE_REQUIRED_INCLUDES ${LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES})
++    if(NOT CPPTRACE_FIND_LIBDWARF_WITH_PKGCONFIG)
++      get_target_property(LIBDWARF_INCLUDE_DIRS ${LIBDWARF_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
++    else()
++      target_include_directories(${target_name} PRIVATE ${LIBDWARF_INCLUDE_DIRS})
++    endif()
++    set(CMAKE_REQUIRED_INCLUDES ${LIBDWARF_INCLUDE_DIRS})
+     CHECK_INCLUDE_FILE_CXX("libdwarf/libdwarf.h" LIBDWARF_IS_NESTED)
+     CHECK_INCLUDE_FILE_CXX("libdwarf.h" LIBDWARF_IS_NOT_NESTED)
+     # check_include_file("libdwarf/libdwarf.h" LIBDWARF_IS_NESTED)
 diff --git a/cmake/OptionVariables.cmake b/cmake/OptionVariables.cmake
 index 5589a8d..2364cf7 100644
 --- a/cmake/OptionVariables.cmake
