@@ -16,22 +16,6 @@ index 481393b..d5e1002 100644
    else()
      include(FetchContent)
      # First, dependencies: Zstd and zlib (currently relying on system zlib)
-@@ -440,8 +445,13 @@ if(CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF)
-     # it's libdwarf/libdwarf.h and libdwarf/dwarf.h or just libdwarf.h and dwarf.h
-     include(CheckIncludeFileCXX)
-     # libdwarf's cmake doesn't properly set variables to indicate where its libraries live
--    get_target_property(LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES ${LIBDWARF_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
--    set(CMAKE_REQUIRED_INCLUDES ${LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES})
-+    if(NOT CPPTRACE_CONDA_LIBDWARF_WEIRDNESS)
-+      get_target_property(LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES ${LIBDWARF_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
-+      set(CMAKE_REQUIRED_INCLUDES ${LIBDWARF_INTERFACE_INCLUDE_DIRECTORIES})
-+    else()
-+      set(CMAKE_REQUIRED_INCLUDES ${LIBDWARF_INCLUDE_DIRS})
-+      target_compile_definitions(${target_name} PRIVATE CPPTRACE_CONDA_LIBDWARF_WEIRDNESS)
-+    endif()
-     CHECK_INCLUDE_FILE_CXX("libdwarf/libdwarf.h" LIBDWARF_IS_NESTED)
-     CHECK_INCLUDE_FILE_CXX("libdwarf.h" LIBDWARF_IS_NOT_NESTED)
-     # check_include_file("libdwarf/libdwarf.h" LIBDWARF_IS_NESTED)
 diff --git a/cmake/OptionVariables.cmake b/cmake/OptionVariables.cmake
 index 5589a8d..d432a3c 100644
 --- a/cmake/OptionVariables.cmake
@@ -44,16 +28,9 @@ index 5589a8d..d432a3c 100644
  option(CPPTRACE_USE_EXTERNAL_ZSTD "" OFF)
  option(CPPTRACE_CONAN "" OFF)
  option(CPPTRACE_VCPKG "" OFF)
-+option(CPPTRACE_CONDA_LIBDWARF_WEIRDNESS "" OFF)
  option(CPPTRACE_SANITIZER_BUILD "" OFF)
  option(CPPTRACE_WERROR_BUILD "" OFF)
  option(CPPTRACE_POSITION_INDEPENDENT_CODE "" ON)
-@@ -174,4 +176,5 @@ mark_as_advanced(
-   CPPTRACE_WERROR_BUILD
-   CPPTRACE_CONAN
-   CPPTRACE_VCPKG
-+  CPPTRACE_CONDA_LIBDWARF_WEIRDNESS
- )
 diff --git a/cmake/in/cpptrace-config-cmake.in b/cmake/in/cpptrace-config-cmake.in
 index fc017ad..06ab746 100644
 --- a/cmake/in/cpptrace-config-cmake.in
@@ -69,23 +46,3 @@ index fc017ad..06ab746 100644
  endif()
 
  # We cannot modify an existing IMPORT target
-diff --git a/src/utils/dwarf.hpp b/src/utils/dwarf.hpp
-index 98bf587..a4f6c55 100644
---- a/src/utils/dwarf.hpp
-+++ b/src/utils/dwarf.hpp
-@@ -13,8 +13,13 @@
-  #include <libdwarf/libdwarf.h>
-  #include <libdwarf/dwarf.h>
- #else
-- #include <libdwarf.h>
-- #include <dwarf.h>
-+ #ifndef CPPTRACE_CONDA_LIBDWARF_WEIRDNESS
-+  #include <libdwarf.h>
-+  #include <dwarf.h>
-+ #else
-+  #include <libdwarf.h>
-+  #include <dwarf.h>
-+ #endif
- #endif
-
- namespace cpptrace {
