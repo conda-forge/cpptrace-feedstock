@@ -1,5 +1,5 @@
 {% set name = "cpptrace" %}
-{% set version = "0.5.4" %}
+{% set version = "0.6.0" %}
 
 package:
   name: {{ name|lower }}
@@ -7,12 +7,10 @@ package:
 
 source:
   url: https://github.com/jeremy-rifkin/cpptrace/archive/v{{ version }}.tar.gz
-  sha256: bab0f76330f90c445216ccade1a3ff29c9c4bbd44805be34d52095cd95b02df4
-  patches:
-    - patches/0001-libdwarf-patches.patch
+  sha256: 7c2996f03d15f61016bc81fe7fa5220b1cc42498333c5c0e699ad2f96b918b96
 
 build:
-  number: 2
+  number: 0
   skip: true  # [win]
 
 requirements:
