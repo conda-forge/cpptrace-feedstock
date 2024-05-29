@@ -1,5 +1,5 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 481393b..d5e1002 100644
+index 481393b..d821612 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -350,7 +350,12 @@ endif()
@@ -17,10 +17,10 @@ index 481393b..d5e1002 100644
      include(FetchContent)
      # First, dependencies: Zstd and zlib (currently relying on system zlib)
 diff --git a/cmake/OptionVariables.cmake b/cmake/OptionVariables.cmake
-index 5589a8d..d432a3c 100644
+index 5589a8d..2364cf7 100644
 --- a/cmake/OptionVariables.cmake
 +++ b/cmake/OptionVariables.cmake
-@@ -159,9 +159,11 @@ if(PROJECT_IS_TOP_LEVEL)
+@@ -159,6 +159,7 @@ if(PROJECT_IS_TOP_LEVEL)
  endif()
 
  option(CPPTRACE_USE_EXTERNAL_LIBDWARF "" OFF)
@@ -28,11 +28,8 @@ index 5589a8d..d432a3c 100644
  option(CPPTRACE_USE_EXTERNAL_ZSTD "" OFF)
  option(CPPTRACE_CONAN "" OFF)
  option(CPPTRACE_VCPKG "" OFF)
- option(CPPTRACE_SANITIZER_BUILD "" OFF)
- option(CPPTRACE_WERROR_BUILD "" OFF)
- option(CPPTRACE_POSITION_INDEPENDENT_CODE "" ON)
 diff --git a/cmake/in/cpptrace-config-cmake.in b/cmake/in/cpptrace-config-cmake.in
-index fc017ad..06ab746 100644
+index fc017ad..ef6e4a0 100644
 --- a/cmake/in/cpptrace-config-cmake.in
 +++ b/cmake/in/cpptrace-config-cmake.in
 @@ -14,7 +14,9 @@ if(@CPPTRACE_GET_SYMBOLS_WITH_LIBDWARF@)
