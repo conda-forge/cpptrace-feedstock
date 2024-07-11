@@ -10,7 +10,7 @@ source:
   sha256: 02a0540b5b1be0788565f48b065b456d3eab81ae2323a50e75ed36449a0143ed
 
 build:
-  number: 0
+  number: 1
   skip: true  # [win]
 
   run_exports:
