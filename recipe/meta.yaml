@@ -1,5 +1,5 @@
 {% set name = "cpptrace" %}
-{% set version = "0.7.3" %}
+{% set version = "0.7.4" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/jeremy-rifkin/cpptrace/archive/v{{ version }}.tar.gz
-  sha256: 8b83200860db148a7fd0b2594e7affc6a55809da256e132d6f0d5b202b2e26dd
+  sha256: 1241790cace5d59ddf21ce5d046f71cd26448a3c8c15d123157498ba81e3543d
 
 build:
   number: 0
@@ -39,6 +39,8 @@ test:
   commands:
     - test -f $PREFIX/lib/libcpptrace${SHLIB_EXT}
     - test -f $PREFIX/include/cpptrace/cpptrace.hpp
+    - test -f $PREFIX/include/cpptrace/basic.hpp
+    - test -f $PREFIX/include/cpptrace/version.hpp
     - test -f $PREFIX/lib/cmake/cpptrace/cpptrace-targets.cmake
     - cd test
     - cmake . -GNinja -DCMAKE_BUILD_TYPE=Debug
