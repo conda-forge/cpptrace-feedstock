@@ -39,6 +39,8 @@ test:
   commands:
     - test -f $PREFIX/lib/libcpptrace${SHLIB_EXT}
     - test -f $PREFIX/include/cpptrace/cpptrace.hpp
+    - test -f $PREFIX/include/cpptrace/basic.hpp
+    - test -f $PREFIX/include/cpptrace/version.hpp
     - test -f $PREFIX/lib/cmake/cpptrace/cpptrace-targets.cmake
     - cd test
     - cmake . -GNinja -DCMAKE_BUILD_TYPE=Debug
