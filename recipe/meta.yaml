@@ -21,18 +21,18 @@ requirements:
     - {{ stdlib("c") }}
     - {{ compiler("cxx") }}
     - cmake
-    - ninja        # [!win]
-    - pkg-config   # [!win]
+    - ninja        # [unix]
+    - pkg-config   # [unix]
   host:
-    - libdwarf     # [!win]
-    - libdwarf-dev # [!win]
-    - zlib         # [!win]
+    - libdwarf     # [unix]
+    - libdwarf-dev # [unix]
+    - zlib         # [unix]
 
 test:
   requires:
     - cmake
     - {{ compiler("cxx") }}
-    - ninja                 # [!win]
+    - ninja                 # [unix]
   files:
     - test
   commands:
