@@ -21,12 +21,12 @@ requirements:
     - {{ stdlib("c") }}
     - {{ compiler("cxx") }}
     - cmake
-    - ninja        # [unix]
-    - pkg-config   # [unix]
+    - ninja         # [unix]
+    - pkg-config    # [unix]
   host:
-    - libdwarf     # [unix]
-    - libdwarf-dev # [unix]
-    - zlib         # [unix]
+    - libdwarf      # [unix]
+    - libdwarf-dev  # [unix]
+    - zlib          # [unix]
 
 test:
   requires:
@@ -41,10 +41,10 @@ test:
     - test -f $PREFIX/include/cpptrace/basic.hpp  # [unix]
     - test -f $PREFIX/include/cpptrace/version.hpp  # [unix]
     - test -f $PREFIX/lib/cmake/cpptrace/cpptrace-targets.cmake  # [unix]
-    - cd test # [unix]
-    - cmake . -GNinja -DCMAKE_BUILD_TYPE=Debug # [unix]
-    - cmake --build . --config Debug # [unix]
-    - ./program # [unix]
+    - cd test  # [unix]
+    - cmake . -GNinja -DCMAKE_BUILD_TYPE=Debug  # [unix]
+    - cmake --build . --config Debug  # [unix]
+    - ./program  # [unix]
 
 
     - echo printbug_X  # [win]
