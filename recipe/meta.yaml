@@ -47,8 +47,10 @@ test:
     - ./program # [unix]
 
 
+    - echo printbug_Z # [win]
+    - "if not exist ${PREFIX}/lib/cpptrace.lib (echo Not found: ${PREFIX}/lib/cpptrace.lib & exit 1)" # [win]
     - echo printbug_A # [win]
-    - "if not exist ${PREFIX}/lib/cpptrace.dll (echo Not found: ${PREFIX}/lib/cpptrace.dll & exit 1)" # [win]
+    - "if not exist ${PREFIX}/bin/cpptrace.dll (echo Not found: ${PREFIX}/bin/cpptrace.dll & exit 1)" # [win]
     - echo printbug_B # [win]
     - "if not exist ${PREFIX}/include/cpptrace/cpptrace.hpp (echo Not found: ${PREFIX}/include/cpptrace/cpptrace.hpp & exit 1)" # [win]
     - echo printbug_C # [win]
