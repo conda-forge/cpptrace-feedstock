@@ -36,15 +36,26 @@ test:
   files:
     - test
   commands:
-    - test -f $PREFIX/lib/libcpptrace${SHLIB_EXT}
-    - test -f $PREFIX/include/cpptrace/cpptrace.hpp
-    - test -f $PREFIX/include/cpptrace/basic.hpp
-    - test -f $PREFIX/include/cpptrace/version.hpp
-    - test -f $PREFIX/lib/cmake/cpptrace/cpptrace-targets.cmake
-    - cd test
-    - cmake . -GNinja -DCMAKE_BUILD_TYPE=Debug
-    - cmake --build . --config Debug
-    - ./program
+    - test -f $PREFIX/lib/libcpptrace${SHLIB_EXT}  # [unix]
+    - test -f $PREFIX/include/cpptrace/cpptrace.hpp  # [unix]
+    - test -f $PREFIX/include/cpptrace/basic.hpp  # [unix]
+    - test -f $PREFIX/include/cpptrace/version.hpp  # [unix]
+    - test -f $PREFIX/lib/cmake/cpptrace/cpptrace-targets.cmake  # [unix]
+    - cd test # [unix]
+    - cmake . -GNinja -DCMAKE_BUILD_TYPE=Debug # [unix]
+    - cmake --build . --config Debug # [unix]
+    - ./program # [unix]
+
+
+    - if not exist ${PREFIX}/lib/libcpptrace.dll exit 1 # [win]
+    - if not exist ${PREFIX}/include/cpptrace/cpptrace.hpp exit 1 # [win]
+    - if not exist ${PREFIX}/include/cpptrace/basic.hpp exit 1 # [win]
+    - if not exist ${PREFIX}/include/cpptrace/version.hpp exit 1 # [win]
+    - if not exist ${PREFIX}/lib/cmake/cpptrace/cpptrace-targets.cmake exit 1 # [win]
+    - cd test # [win]
+    - cmake . # [win]
+    - cmake --build . --config Debug # [win]
+    - ./program.exe # [win]
 
 about:
   home: https://github.com/jeremy-rifkin/cpptrace
