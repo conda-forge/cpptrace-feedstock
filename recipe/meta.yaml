@@ -47,15 +47,25 @@ test:
     - ./program # [unix]
 
 
+    - echo printbug_A # [win]
     - if not exist ${PREFIX}/lib/libcpptrace.dll exit 1 # [win]
+    - echo printbug_B # [win]
     - if not exist ${PREFIX}/include/cpptrace/cpptrace.hpp exit 1 # [win]
+    - echo printbug_C # [win]
     - if not exist ${PREFIX}/include/cpptrace/basic.hpp exit 1 # [win]
+    - echo printbug_D # [win]
     - if not exist ${PREFIX}/include/cpptrace/version.hpp exit 1 # [win]
+    - echo printbug_E # [win]
     - if not exist ${PREFIX}/lib/cmake/cpptrace/cpptrace-targets.cmake exit 1 # [win]
+    - echo printbug_F # [win]
     - cd test # [win]
+    - echo printbug_G # [win]
     - cmake . # [win]
+    - echo printbug_H # [win]
     - cmake --build . --config Debug # [win]
+    - echo printbug_I # [win]
     - ./program.exe # [win]
+    - echo printbug_J # [win]
 
 about:
   home: https://github.com/jeremy-rifkin/cpptrace
