@@ -47,6 +47,8 @@ test:
     - ./program # [unix]
 
 
+    - echo printbug_X # [win]
+    - echo SET # [win]
     - echo printbug_Z # [win]
     - "if not exist %PREFIX%\\lib\\cpptrace.lib (echo Not found: %PREFIX%\\lib\\cpptrace.lib & exit 1)" # [win]
     - echo printbug_A # [win]
