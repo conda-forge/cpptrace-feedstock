@@ -69,7 +69,7 @@ test:
     - echo printbug_H  # [win]
     - cmake --build . --config Debug  # [win]
     - echo printbug_I  # [win]
-    - .\\program.exe  # [win]
+    - .\\Debug\\program.exe  # [win]
     - echo printbug_J  # [win]
 
 about:
