@@ -10,7 +10,7 @@ source:
   sha256: 0068942b3aa3b0733d29f7ea1daa615bc5a943a411c148e5089609a0e3fe7e98
 
 build:
-  number: 0
+  number: 1
 
   run_exports:
     - {{ pin_subpackage('cpptrace', max_pin='x.x.x') }}
