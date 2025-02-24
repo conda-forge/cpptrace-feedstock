@@ -1,5 +1,5 @@
 {% set name = "cpptrace" %}
-{% set version = "0.8.1" %}
+{% set version = "0.8.2" %}
 
 package:
   name: {{ name|lower }}
@@ -7,10 +7,10 @@ package:
 
 source:
   url: https://github.com/jeremy-rifkin/cpptrace/archive/v{{ version }}.tar.gz
-  sha256: 0068942b3aa3b0733d29f7ea1daa615bc5a943a411c148e5089609a0e3fe7e98
+  sha256: 618fb746174f76eb03c7ece059ebdcfe39b7b6adca6a5da0c9f9bc6a4764d7f9
 
 build:
-  number: 1
+  number: 0
 
   run_exports:
     - {{ pin_subpackage('cpptrace', max_pin='x.x.x') }}
