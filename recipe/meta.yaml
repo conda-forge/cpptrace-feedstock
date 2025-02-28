@@ -1,6 +1,12 @@
 {% set name = "cpptrace" %}
 {% set version = "0.8.2" %}
 
+{% set build = 1 %}
+
+{% if unwind_backend == "default" %}
+{% set build = build + 100 %}
+{% endif %}
+
 package:
   name: {{ name|lower }}
   version: {{ version }}
@@ -10,7 +16,8 @@ source:
   sha256: 618fb746174f76eb03c7ece059ebdcfe39b7b6adca6a5da0c9f9bc6a4764d7f9
 
 build:
-  number: 0
+  number: {{ build }}
+  string: {{ unwind_backend }}_h{{ PKG_HASH }}_{{ build }}
 
   run_exports:
     - {{ pin_subpackage('cpptrace', max_pin='x.x.x') }}
@@ -27,6 +34,7 @@ requirements:
     - libdwarf      # [unix]
     - libdwarf-dev  # [unix]
     - zlib          # [unix]
+    - libunwind     # [unix and unwind_backend == "libunwind"]
 
 test:
   requires:
@@ -42,7 +50,8 @@ test:
     - test -f $PREFIX/include/cpptrace/version.hpp  # [unix]
     - test -f $PREFIX/lib/cmake/cpptrace/cpptrace-targets.cmake  # [unix]
     - cd test  # [unix]
-    - cmake . -GNinja -DCMAKE_BUILD_TYPE=Debug  # [unix]
+    - cmake . -GNinja -DCMAKE_BUILD_TYPE=Debug  # [unix and unwind_backend != "libunwind"]
+    - cmake . -GNinja -DCMAKE_BUILD_TYPE=Debug -DTEST_LIBUNWIND=ON  # [unix and unwind_backend == "libunwind"]
     - cmake --build . --config Debug  # [unix]
     - ./program  # [unix]
 
