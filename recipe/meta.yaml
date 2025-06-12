@@ -14,6 +14,8 @@ package:
 source:
   url: https://github.com/jeremy-rifkin/cpptrace/archive/v{{ version }}.tar.gz
   sha256: 0e11aebb6b9b98ce9134a58532b63982365aadc76533a4fbb7f6fb6edb32de2e
+  patches:
+    - 0001-static-assert.patch  # [win]
 
 build:
   number: {{ build }}
